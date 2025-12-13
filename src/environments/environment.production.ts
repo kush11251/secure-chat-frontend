@@ -3,6 +3,6 @@ export const environment = {
   envName: 'prod',
   // In production, set a full URL if your app is served from a different domain than the API
   // e.g. 'https://api.securechat.example.com'
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'https://secure-chat-backend-j9q0.onrender.com/api',
   wsUrl: '/socket.io'
 };
