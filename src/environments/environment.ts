@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   envName: 'base',
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'https://secure-chat-backend-076m.onrender.com/api',
   wsUrl: '/socket.io'
 };
