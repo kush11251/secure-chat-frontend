@@ -3,7 +3,10 @@ import { authGuard } from './core/guards/auth.guard';
 import { logoutGuard } from './core/guards/logout.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'chat', pathMatch: 'full' },
+  {
+    path: '',
+    loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
+  },
   {
     path: 'auth',
     children: [

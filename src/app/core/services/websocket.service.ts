@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 export class WebsocketService {
   private socket?: Socket;
   connected = signal(false);
+  connecting = signal(false);
 
   private backendOrigin(): string {
     try {
@@ -18,16 +19,34 @@ export class WebsocketService {
     }
   }
 
+  private createSocket(): Socket {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+    this.connecting.set(true);
+    const socket = io(this.backendOrigin(), {
+      withCredentials: true,
+      transports: ['websocket', 'polling'],
+      auth: token ? { token } : undefined,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000
+    });
+    socket.on('connect', () => {
+      this.connected.set(true);
+      this.connecting.set(false);
+    });
+    socket.on('disconnect', () => {
+      this.connected.set(false);
+      this.connecting.set(true);
+    });
+    socket.io.on('reconnect_attempt', () => this.connecting.set(true));
+    socket.io.on('reconnect_error', () => this.connecting.set(true));
+    socket.io.on('reconnect_failed', () => this.connecting.set(false));
+    return socket;
+  }
+
   connect(): Socket {
     if (!this.socket) {
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
-      this.socket = io(this.backendOrigin(), {
-        withCredentials: true,
-        transports: ['websocket', 'polling'],
-        auth: token ? { token } : undefined
-      });
-      this.socket.on('connect', () => this.connected.set(true));
-      this.socket.on('disconnect', () => this.connected.set(false));
+      this.socket = this.createSocket();
     }
     return this.socket;
   }
@@ -37,6 +56,7 @@ export class WebsocketService {
       this.socket.disconnect();
       this.socket = undefined;
       this.connected.set(false);
+      this.connecting.set(false);
     }
   }
 

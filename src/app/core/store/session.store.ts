@@ -6,6 +6,7 @@ export interface SessionUser {
   name?: string;
   email?: string;
   status?: string;
+  avatarUrl?: string;
 }
 
 @Injectable({ providedIn: 'root' })

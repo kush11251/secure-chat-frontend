@@ -11,44 +11,61 @@ import { ToastService } from '../../core/services/toast.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-  <div class="mx-auto max-w-2xl p-4">
-    <h1 class="text-lg font-semibold">Settings</h1>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
+    <div class="w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-950/90 p-6 text-slate-50 shadow-2xl shadow-black/50">
+      <h1 class="text-lg font-semibold">Settings</h1>
 
-    <div class="mt-4 grid gap-4">
-      <!-- Theme -->
-      <section class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm font-medium">Appearance</div>
-            <div class="text-xs text-neutral-500">Switch between Light and Dark mode.</div>
+      <div class="mt-4 grid gap-4">
+        <!-- Theme -->
+        <section class="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium">Appearance</div>
+              <div class="text-xs text-slate-400">Switch between Light and Dark mode.</div>
+            </div>
+            <button class="rounded-md border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-900/80" (click)="toggleTheme()">
+              Toggle {{ theme.mode() === 'dark' ? 'Light' : 'Dark' }}
+            </button>
           </div>
-          <button class="rounded-md border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800" (click)="toggleTheme()">Toggle {{ theme.mode() === 'dark' ? 'Light' : 'Dark' }}</button>
-        </div>
-      </section>
+        </section>
 
-      <!-- Connectivity -->
-      <section class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm font-medium">Connectivity</div>
-            <div class="text-xs text-neutral-500">API and WebSocket diagnostic.</div>
+        <!-- Connectivity -->
+        <section class="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium">Connectivity</div>
+              <div class="text-xs text-slate-400">API and WebSocket diagnostic.</div>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span
+                class="px-2 py-1 rounded"
+                [ngClass]="
+                  wsSvc.connected()
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : (wsSvc.connecting() ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700')
+                "
+              >
+                WS: {{ wsSvc.connected() ? 'connected' : (wsSvc.connecting() ? 'connecting' : 'down') }}
+              </span>
+              <button class="rounded-md border border-slate-700 px-2 py-1 hover:bg-slate-900/80" (click)="ping()">Ping</button>
+            </div>
           </div>
-          <div class="flex items-center gap-2 text-xs">
-            <span class="px-2 py-1 rounded" [ngClass]="wsSvc.connected() ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'">WS: {{ wsSvc.connected() ? 'connected' : 'down' }}</span>
-            <button class="rounded-md border border-neutral-300 dark:border-neutral-700 px-2 py-1 hover:bg-neutral-50 dark:hover:bg-neutral-800" (click)="ping()">Ping</button>
-          </div>
-        </div>
-        <div class="mt-2 text-xs text-neutral-500" *ngIf="lastPing()">Last ping: {{ lastPing() }} ms</div>
-      </section>
+          <div class="mt-2 text-xs text-slate-400" *ngIf="lastPing()">Last ping: {{ lastPing() }} ms</div>
+        </section>
 
-      <!-- Notifications token -->
-      <section class="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-        <div class="text-sm font-medium">Notifications</div>
-        <form [formGroup]="form" class="mt-2 flex items-center gap-2" (ngSubmit)="saveToken()">
-          <input class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-2 text-sm" placeholder="Notification token" formControlName="token" />
-          <button class="rounded-md bg-brand-600 px-3 py-2 text-white hover:bg-brand-700" type="submit">Save</button>
-        </form>
-      </section>
+        <!-- Notifications token -->
+        <section class="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+          <div class="text-sm font-medium">Notifications</div>
+          <form [formGroup]="form" class="mt-2 flex items-center gap-2" (ngSubmit)="saveToken()">
+            <input
+              class="w-full rounded-md border border-slate-700 bg-slate-900/80 p-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              placeholder="Notification token"
+              formControlName="token"
+            />
+            <button class="rounded-md bg-brand-600 px-3 py-2 text-white hover:bg-brand-700" type="submit">Save</button>
+          </form>
+        </section>
+      </div>
     </div>
   </div>
   `

@@ -6,8 +6,9 @@ export interface ChatDto {
   _id: string;
   isGroup: boolean;
   groupName?: string;
-  members: Array<{ _id: string; uid: string; name: string; status?: string }>;
+  members: Array<{ _id: string; uid: string; name: string; avatarUrl?: string; status?: string }>;
   lastMessage?: any;
+  unreadCount?: number;
 }
 
 @Injectable({ providedIn: 'root' })

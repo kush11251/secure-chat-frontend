@@ -5,12 +5,14 @@ import { environment } from '../../../environments/environment';
 export interface MessageDto {
   _id: string;
   chatId: string;
-  sender: { _id: string; uid: string; name: string };
+  sender: { _id: string; id?: string; uid: string; name: string; avatarUrl?: string };
   type: 'text' | 'image' | 'file' | string;
   content?: string;
   mediaUrl?: string;
   createdAt?: string;
   reactions?: Array<{ user: any; emoji: string }>;
+  readBy?: string[];
+  status?: 'none' | 'delivered' | 'seen';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,5 +52,13 @@ export class MessageService {
 
   storeMedia(chatId: string, mediaUrl: string, type: string = 'file') {
     return this.http.post<{ message: MessageDto }>(`${this.base}/media`, { chatId, mediaUrl, type }, { withCredentials: true });
+  }
+
+  markDelivered(messageId: string) {
+    return this.http.post<{ updated: number }>(`${this.base}/${encodeURIComponent(messageId)}/delivered`, {}, { withCredentials: true });
+  }
+
+  markDeliveredBulk(chatId: string, messageIds?: string[]) {
+    return this.http.post<{ updated: number }>(`${this.base}/delivered`, { chatId, messageIds }, { withCredentials: true });
   }
 }
